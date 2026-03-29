@@ -8,150 +8,91 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  html {
+    overflow-x: hidden;
+  }
   body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    overflow: hidden;
-    gap: 28px;
-    position: relative;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100vh; padding: 40px 24px 220px;
+    gap: 28px; position: relative;
+    overflow: visible;
   }
 
-  /* ── Night sky background ── */
   #sky {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    background: linear-gradient(
-      180deg,
-      #07091a 0%,
-      #0e1435 25%,
-      #1a2060 50%,
-      #2a2555 70%,
-      #3b2060 85%,
-      #1e1030 100%
-    );
+    position: fixed; inset: 0; z-index: 0;
+    background: linear-gradient(180deg,
+      #07091a 0%, #0e1435 25%, #1a2060 50%,
+      #2a2555 70%, #3b2060 85%, #1e1030 100%);
   }
 
-  /* Stars */
-  #stars-canvas {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
+  #stars-canvas { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+
+  /* ── Drifting clouds layer ── */
+  #clouds-layer { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+
+  @keyframes driftRight {
+    from { transform: translateX(-480px); }
+    to   { transform: translateX(calc(100vw + 480px)); }
+  }
+  @keyframes driftLeft {
+    from { transform: translateX(calc(100vw + 480px)); }
+    to   { transform: translateX(-480px); }
   }
 
-  /* Clouds */
-  .cloud-layer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    z-index: 2;
-    pointer-events: none;
+  .cloud-bank {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    z-index: 2; pointer-events: none;
   }
 
-  /* Fireworks */
-  #fw {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 3;
-  }
+  #fw { position: fixed; inset: 0; pointer-events: none; z-index: 3; }
 
-  /* Content */
   .content {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 28px;
+    position: relative; z-index: 10;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 28px;
   }
 
-  canvas#c {
-    display: block;
-    max-width: 100%;
-    transition: opacity 0.8s ease;
-  }
+  canvas#c { display: block; max-width: 100%; transition: opacity 0.8s ease; }
 
-  /* Wrapper that stacks canvas + crisp text */
-  .text-wrap {
-    position: relative;
-  }
+  .text-wrap { position: relative; }
 
   .crisp-text {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    opacity: 0;
-    transition: opacity 0.9s ease;
-    pointer-events: none;
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 14px; opacity: 0;
+    transition: opacity 0.9s ease; pointer-events: none;
   }
-
   .crisp-text .line1 {
-    font-family: 'Dancing Script', cursive;
-    font-weight: 700;
-    font-size: clamp(26px, 7.5vw, 54px);
-    color: #ffffff;
-    text-shadow:
-      0 0 18px rgba(255,248,180,0.9),
-      0 0 40px rgba(255,220,100,0.5),
-      0 2px 4px rgba(0,0,0,0.8);
-    line-height: 1.2;
-    white-space: nowrap;
+    font-family: 'Dancing Script', cursive; font-weight: 700;
+    font-size: clamp(26px, 7.5vw, 54px); color: #fff;
+    text-shadow: 0 0 18px rgba(255,248,180,0.9),0 0 40px rgba(255,220,100,0.5),0 2px 4px rgba(0,0,0,0.8);
+    line-height: 1.2; white-space: nowrap;
   }
   .crisp-text .line2 {
-    font-family: 'Dancing Script', cursive;
-    font-weight: 700;
-    font-size: clamp(17px, 4.8vw, 35px);
-    color: #ffffff;
-    text-shadow:
-      0 0 14px rgba(255,248,180,0.9),
-      0 0 30px rgba(255,220,100,0.5),
-      0 2px 4px rgba(0,0,0,0.8);
-    line-height: 1.2;
-    white-space: nowrap;
+    font-family: 'Dancing Script', cursive; font-weight: 700;
+    font-size: clamp(17px, 4.8vw, 35px); color: #fff;
+    text-shadow: 0 0 14px rgba(255,248,180,0.9),0 0 30px rgba(255,220,100,0.5),0 2px 4px rgba(0,0,0,0.8);
+    line-height: 1.2; white-space: nowrap;
   }
-
   .cake  { font-style: normal; filter: drop-shadow(0 0 6px rgba(255,180,0,0.8)); }
   .heart { font-style: normal; color: #ff4d6d; filter: drop-shadow(0 0 8px rgba(255,60,80,0.9)); }
 
-  /* Info badge */
   .info-badge {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    opacity: 0;
-    animation: fadeUp 0.7s 3.4s forwards;
+    display: flex; gap: 20px; align-items: center;
+    opacity: 0; animation: fadeUp 0.7s 3.4s forwards;
   }
-  .badge-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
+  .badge-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .badge-label {
-    font-family: 'Quicksand', sans-serif;
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
+    font-family: 'Quicksand', sans-serif; font-size: 11px;
+    letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.4);
   }
   .badge-value {
-    font-family: 'Dancing Script', cursive;
-    font-size: 22px;
+    font-family: 'Dancing Script', cursive; font-size: 22px;
     background: linear-gradient(90deg,#f59e0b,#ef4444,#ec4899,#8b5cf6,#06b6d4,#f59e0b);
     background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     animation: shimmer 4s linear infinite;
   }
   .badge-sep {
@@ -163,102 +104,259 @@
     to   { background-position: 200% center; }
   }
 
-  /* Photo */
-  .photo-slot {
-    width: 180px; height: 180px;
-    border-radius: 50%;
+  /* ── Photo Scene ──
+     Padded generously so candles above, ribbon below, stars on sides never clip
+  */
+  .photo-scene {
     position: relative;
-    overflow: visible;
-    cursor: pointer;
+    width: 380px; height: 390px;
     opacity: 0;
     animation: fadeUp 0.7s 3.8s forwards;
   }
-  .photo-slot::before {
-    content: '';
-    position: absolute;
-    inset: -3px;
-    border-radius: 50%;
-    background: conic-gradient(#f59e0b,#ef4444,#ec4899,#8b5cf6,#06b6d4,#10b981,#f59e0b);
-    animation: spinRing 3s linear infinite;
-    z-index: -1;
-  }
-  @keyframes spinRing { to { transform: rotate(360deg); } }
-  .photo-inner {
-    width: 180px; height: 180px;
-    border-radius: 50%;
-    background: rgba(10,12,40,0.85);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    overflow: hidden;
-  }
-  .photo-inner svg { opacity: 0.3; }
-  .photo-inner span {
-    font-family: 'Quicksand', sans-serif;
-    font-size: 12px;
-    color: rgba(255,255,255,0.25);
-  }
-  .photo-inner img {
-    position: absolute;
-    inset: 0; width: 100%; height: 100%;
-    object-fit: cover; border-radius: 50%;
-  }
-  input[type="file"] { display: none; }
 
+  /* Candles – absolutely positioned above photo centre */
+  .candles-strip {
+    position: absolute;
+    top: 16px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 10px; z-index: 10;
+  }
+  .candle { display: flex; flex-direction: column; align-items: center; }
+  .flame {
+    width: 8px; height: 13px;
+    background: radial-gradient(ellipse at 50% 80%,#facc15 0%,#fb923c 50%,transparent 80%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: flicker 0.35s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 5px #facc15);
+  }
+  @keyframes flicker {
+    from { transform: scaleX(1) scaleY(1) rotate(-3deg); opacity: 0.9; }
+    to   { transform: scaleX(0.78) scaleY(1.18) rotate(3deg); opacity: 1; }
+  }
+  .wick { width: 2px; height: 6px; background: #92400e; border-radius: 1px; }
+  .candle-body {
+    width: 9px; height: 24px;
+    border-radius: 3px 3px 2px 2px;
+    position: relative; overflow: hidden;
+  }
+  .candle:nth-child(1) .candle-body { background: linear-gradient(180deg,#fde68a,#f59e0b); }
+  .candle:nth-child(2) .candle-body { background: linear-gradient(180deg,#fca5a5,#ef4444); }
+  .candle:nth-child(3) .candle-body { background: linear-gradient(180deg,#c4b5fd,#8b5cf6); }
+  .candle:nth-child(4) .candle-body { background: linear-gradient(180deg,#86efac,#22c55e); }
+  .candle:nth-child(5) .candle-body { background: linear-gradient(180deg,#7dd3fc,#3b82f6); }
+  .candle-body::after {
+    content: ''; position: absolute; top: 0; left: 2px;
+    width: 2px; height: 100%;
+    background: rgba(255,255,255,0.4); border-radius: 2px;
+  }
+
+  /* Corner stars */
+  .star-deco {
+    position: absolute; font-size: 22px; z-index: 10;
+    animation: starPop 1.8s ease-in-out infinite alternate;
+  }
+  .star-deco.tl { top:  72px; left:  16px; }
+  .star-deco.tr { top:  72px; right: 16px; }
+  .star-deco.bl { bottom: 52px; left:  16px; }
+  .star-deco.br { bottom: 52px; right: 16px; }
+  @keyframes starPop {
+    from { transform: scale(1)   rotate(-10deg); filter: drop-shadow(0 0 4px gold); }
+    to   { transform: scale(1.2) rotate(10deg);  filter: drop-shadow(0 0 10px gold); }
+  }
+
+  /* Outer spinning rainbow ring wrapper (centers it) */
+  .photo-outer-ring {
+    position: absolute;
+    width: 214px; height: 214px;
+    top: 50%; left: 50%;
+    margin-top: -107px; margin-left: -107px;
+    z-index: 2;
+    border-radius: 50%;
+    background: conic-gradient(
+      #facc15,#fb923c,#f87171,#ec4899,
+      #c084fc,#818cf8,#38bdf8,#34d399,#facc15
+    );
+    animation: spinRing 3s linear infinite;
+    transform-origin: center center;
+  }
+
+  /* Gold inner ring */
+  .photo-ribbon {
+    position: absolute; width: 190px; height: 190px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,
+      #f59e0b 0%,#fde68a 20%,#f59e0b 40%,
+      #fbbf24 60%,#fde68a 80%,#f59e0b 100%
+    );
+    top: 50%; left: 50%; margin-top: -95px; margin-left: -95px;
+    z-index: 3;
+    animation: pulseGold 2.5s ease-in-out infinite;
+  }
+  @keyframes pulseGold {
+    0%,100% { box-shadow: 0 0 12px 3px rgba(245,158,11,0.5),inset 0 0 8px rgba(255,255,255,0.2); }
+    50%      { box-shadow: 0 0 28px 10px rgba(245,158,11,0.8),inset 0 0 18px rgba(255,255,255,0.35); }
+  }
+
+  /* Dark gap */
+  .photo-gap {
+    position: absolute; width: 200px; height: 200px;
+    border-radius: 50%; background: #0a0c28;
+    top: 50%; left: 50%; margin-top: -100px; margin-left: -100px;
+    z-index: 2;
+  }
+
+  /* Photo */
+  .photo-circle {
+    position: absolute; width: 174px; height: 174px;
+    border-radius: 50%; overflow: hidden; z-index: 4; background: #0a0c28;
+    top: 50%; left: 50%; margin-top: -87px; margin-left: -87px;
+  }
+  .photo-circle img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* Ribbon banner below photo */
+  .ribbon-banner {
+    position: absolute;
+    bottom: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 10;
+  }
+  .ribbon-banner svg { overflow-x: hidden; overflow-y: auto; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5)); }
+  .ribbon-text {
+    font-family: 'Dancing Script', cursive; font-size: 13px;
+    font-weight: 700; fill: #fff; text-anchor: middle;
+  }
+
+  @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+
+  /* ── Floating side decorations ── */
+  .side-deco {
+    position: fixed;
+    z-index: 8;
+    pointer-events: none;
+    opacity: 0;
+    animation: decoFadeIn 1s 4s forwards;
+  }
+  @keyframes decoFadeIn {
+    to { opacity: 1; }
+  }
+
+  /* Individual float animations */
+  @keyframes floatA {
+    0%,100% { transform: translateY(0px) rotate(-8deg); }
+    50%      { transform: translateY(-14px) rotate(8deg); }
+  }
+  @keyframes floatB {
+    0%,100% { transform: translateY(0px) rotate(6deg); }
+    50%      { transform: translateY(-18px) rotate(-6deg); }
+  }
+  @keyframes floatC {
+    0%,100% { transform: translateY(0px) scale(1); }
+    50%      { transform: translateY(-10px) scale(1.08); }
+  }
+  @keyframes twinkle {
+    0%,100% { opacity: 0.7; transform: scale(1) rotate(0deg); }
+    50%      { opacity: 1;   transform: scale(1.3) rotate(20deg); }
+  }
+  @keyframes candleFloat {
+    0%,100% { transform: translateY(0px); }
+    50%      { transform: translateY(-12px); }
+  }
+
+  .deco-item {
+    font-size: 32px;
+    display: block;
+    line-height: 1;
+    filter: drop-shadow(0 0 8px rgba(255,200,80,0.6));
+  }
+  .deco-item.small  { font-size: 22px; }
+  .deco-item.medium { font-size: 28px; }
+  .deco-item.large  { font-size: 38px; }
+
+  /* Left side positions */
+  .sd-l1 { left: 2vw;  top: 12%; animation-delay: 4.0s; }
+  .sd-l2 { left: 5vw;  top: 28%; animation-delay: 4.2s; }
+  .sd-l3 { left: 1vw;  top: 44%; animation-delay: 4.4s; }
+  .sd-l4 { left: 6vw;  top: 60%; animation-delay: 4.1s; }
+  .sd-l5 { left: 2vw;  top: 75%; animation-delay: 4.5s; }
+  .sd-l6 { left: 8vw;  top: 88%; animation-delay: 4.3s; }
+
+  /* Right side positions */
+  .sd-r1 { right: 2vw;  top: 10%; animation-delay: 4.0s; }
+  .sd-r2 { right: 5vw;  top: 26%; animation-delay: 4.3s; }
+  .sd-r3 { right: 1vw;  top: 42%; animation-delay: 4.1s; }
+  .sd-r4 { right: 6vw;  top: 58%; animation-delay: 4.5s; }
+  .sd-r5 { right: 2vw;  top: 73%; animation-delay: 4.2s; }
+  .sd-r6 { right: 8vw;  top: 87%; animation-delay: 4.4s; }
+
+  /* Float animation assignments */
+  .sd-l1 .deco-item, .sd-r2 .deco-item { animation: floatA 3.2s ease-in-out infinite; }
+  .sd-l2 .deco-item, .sd-r3 .deco-item { animation: floatB 4.1s ease-in-out infinite; }
+  .sd-l3 .deco-item, .sd-r1 .deco-item { animation: floatC 3.7s ease-in-out infinite; }
+  .sd-l4 .deco-item, .sd-r5 .deco-item { animation: candleFloat 2.8s ease-in-out infinite; }
+  .sd-l5 .deco-item, .sd-r4 .deco-item { animation: twinkle 2.4s ease-in-out infinite; }
+  .sd-l6 .deco-item, .sd-r6 .deco-item { animation: floatA 3.9s ease-in-out 0.5s infinite; }
 </style>
 </head>
 <body>
 
 <div id="sky"></div>
 <canvas id="stars-canvas"></canvas>
+<div id="clouds-layer"></div>
 
-<!-- Clouds SVG layer -->
-<svg class="cloud-layer" viewBox="0 0 1440 320" preserveAspectRatio="none" style="height:320px">
+<!-- Static bottom cloud bank -->
+<svg class="cloud-bank" viewBox="0 0 1440 240" preserveAspectRatio="none" style="height:240px">
   <defs>
-    <filter id="blur1"><feGaussianBlur stdDeviation="8"/></filter>
-    <filter id="blur2"><feGaussianBlur stdDeviation="14"/></filter>
+    <filter id="cb1"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="cb2"><feGaussianBlur stdDeviation="18"/></filter>
   </defs>
-  <!-- back clouds – dark navy -->
-  <g filter="url(#blur2)" opacity="0.55">
-    <ellipse cx="200"  cy="320" rx="380" ry="90"  fill="#1a2060"/>
-    <ellipse cx="700"  cy="310" rx="500" ry="110" fill="#1a1d55"/>
-    <ellipse cx="1200" cy="315" rx="420" ry="95"  fill="#1e2265"/>
+  <g filter="url(#cb2)" opacity="0.6">
+    <ellipse cx="200"  cy="240" rx="380" ry="80"  fill="#1a2060"/>
+    <ellipse cx="700"  cy="230" rx="500" ry="95"  fill="#1a1d55"/>
+    <ellipse cx="1200" cy="235" rx="420" ry="85"  fill="#1e2265"/>
   </g>
-  <!-- mid clouds -->
-  <g filter="url(#blur1)" opacity="0.75">
-    <ellipse cx="120"  cy="340" rx="280" ry="70"  fill="#232a70"/>
-    <ellipse cx="500"  cy="330" rx="360" ry="80"  fill="#252b72"/>
-    <ellipse cx="900"  cy="335" rx="400" ry="85"  fill="#1f2568"/>
-    <ellipse cx="1350" cy="330" rx="300" ry="72"  fill="#20276a"/>
+  <g filter="url(#cb1)" opacity="0.8">
+    <ellipse cx="120"  cy="255" rx="280" ry="60"  fill="#232a70"/>
+    <ellipse cx="500"  cy="248" rx="360" ry="70"  fill="#252b72"/>
+    <ellipse cx="900"  cy="252" rx="400" ry="75"  fill="#1f2568"/>
+    <ellipse cx="1350" cy="248" rx="300" ry="62"  fill="#20276a"/>
   </g>
-  <!-- front cloud wisps – slightly lighter purple-blue -->
-  <g opacity="0.55">
-    <ellipse cx="300"  cy="360" rx="260" ry="55"  fill="#2e3580"/>
-    <ellipse cx="750"  cy="355" rx="350" ry="60"  fill="#2c3378"/>
-    <ellipse cx="1150" cy="358" rx="290" ry="58"  fill="#2f3682"/>
+  <g opacity="0.6">
+    <ellipse cx="300"  cy="270" rx="260" ry="48"  fill="#2e3580"/>
+    <ellipse cx="750"  cy="265" rx="350" ry="52"  fill="#2c3378"/>
+    <ellipse cx="1150" cy="268" rx="290" ry="50"  fill="#2f3682"/>
   </g>
-  <!-- moon glow hint top right -->
   <radialGradient id="moonGlow" cx="85%" cy="10%" r="25%">
     <stop offset="0%" stop-color="#fffde0" stop-opacity="0.18"/>
     <stop offset="100%" stop-color="#fffde0" stop-opacity="0"/>
   </radialGradient>
-  <rect x="0" y="0" width="1440" height="320" fill="url(#moonGlow)"/>
+  <rect x="0" y="0" width="1440" height="240" fill="url(#moonGlow)"/>
 </svg>
 
 <canvas id="fw"></canvas>
 
+<!-- Left side decorations -->
+<div class="side-deco sd-l1"><span class="deco-item large">🎂</span></div>
+<div class="side-deco sd-l2"><span class="deco-item small">⭐</span></div>
+<div class="side-deco sd-l3"><span class="deco-item medium">🕯️</span></div>
+<div class="side-deco sd-l4"><span class="deco-item small">✨</span></div>
+<div class="side-deco sd-l5"><span class="deco-item medium">🎁</span></div>
+<div class="side-deco sd-l6"><span class="deco-item small">💛</span></div>
+
+<!-- Right side decorations -->
+<div class="side-deco sd-r1"><span class="deco-item medium">🌟</span></div>
+<div class="side-deco sd-r2"><span class="deco-item large">🎈</span></div>
+<div class="side-deco sd-r3"><span class="deco-item small">🕯️</span></div>
+<div class="side-deco sd-r4"><span class="deco-item small">✨</span></div>
+<div class="side-deco sd-r5"><span class="deco-item medium">🎉</span></div>
+<div class="side-deco sd-r6"><span class="deco-item small">💖</span></div>
+
+
 <div class="content">
 
-  <!-- Particle canvas (intro animation) -->
   <div class="text-wrap" id="textWrap">
     <canvas id="c"></canvas>
-    <!-- Crisp HTML text fades in on top after particles settle -->
     <div class="crisp-text" id="crispText">
       <p class="line1">Chúc mừng sinh nhật bố <span class="cake">🎂</span></p>
       <p class="line2">Chúc bố luôn mạnh khỏe, vui vẻ mỗi ngày <span class="heart">❤️</span></p>
@@ -277,261 +375,257 @@
     </div>
   </div>
 
-  <label class="photo-slot" id="photoSlot">
-    <input type="file" accept="image/*" id="fileInput">
-    <div class="photo-inner" id="photoInner">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
-        <rect x="3" y="3" width="18" height="18" rx="3"/>
-        <circle cx="8.5" cy="8.5" r="1.5"/>
-        <path d="M21 15l-5-5L5 21"/>
-      </svg>
-      <span>Thêm ảnh bố</span>
+  <!-- Photo Scene -->
+  <div class="photo-scene" id="photoScene">
+
+    <!-- Candles above -->
+    <div class="candles-strip">
+      <div class="candle"><div class="flame"></div><div class="wick"></div><div class="candle-body"></div></div>
+      <div class="candle"><div class="flame"></div><div class="wick"></div><div class="candle-body"></div></div>
+      <div class="candle"><div class="flame"></div><div class="wick"></div><div class="candle-body"></div></div>
+      <div class="candle"><div class="flame"></div><div class="wick"></div><div class="candle-body"></div></div>
+      <div class="candle"><div class="flame"></div><div class="wick"></div><div class="candle-body"></div></div>
     </div>
-  </label>
+
+    <!-- Corner stars -->
+    <span class="star-deco tl">⭐</span>
+    <span class="star-deco tr">🌟</span>
+    <span class="star-deco bl">✨</span>
+    <span class="star-deco br">⭐</span>
+
+    <!-- Outer spinning rainbow ring (ring only, children stay still) -->
+    <div class="photo-outer-ring"></div>
+    <div class="photo-gap"></div>
+    <div class="photo-ribbon"></div>
+    <div class="photo-circle">
+      <img id="photoImg" src="img.jpg" alt="Bố" onerror="this.style.display='none'">
+    </div>
+
+    <!-- Ribbon banner -->
+    <div class="ribbon-banner">
+      <svg width="200" height="44" viewBox="0 0 200 44">
+        <defs>
+          <linearGradient id="rs" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="rgba(255,255,255,0.3)"/>
+            <stop offset="50%"  stop-color="rgba(255,255,255,0)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0.1)"/>
+          </linearGradient>
+        </defs>
+        <polygon points="0,4 18,22 0,40 52,40 52,4" fill="#ef4444"/>
+        <polygon points="200,4 182,22 200,40 148,40 148,4" fill="#ef4444"/>
+        <rect x="10" y="6" width="180" height="32" rx="5" fill="#f87171"/>
+        <rect x="10" y="6" width="180" height="32" rx="5" fill="url(#rs)"/>
+        <rect x="13" y="9" width="174" height="26" rx="3" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        <text x="100" y="28" class="ribbon-text">🎂 Happy Birthday Bố 🎂</text>
+      </svg>
+    </div>
+
+  </div>
 </div>
 
 <script>
-/* =========================================
-   STARS
-   ========================================= */
-(function () {
-  const sc   = document.getElementById('stars-canvas');
-  const sctx = sc.getContext('2d');
-  sc.width   = window.innerWidth;
-  sc.height  = window.innerHeight;
-
-  const stars = Array.from({ length: 180 }, () => ({
-    x: Math.random() * sc.width,
-    y: Math.random() * sc.height * 0.85,
-    r: Math.random() * 1.4 + 0.3,
-    alpha: Math.random(),
-    speed: Math.random() * 0.008 + 0.003
+/* ── STARS ── */
+(function(){
+  const sc=document.getElementById('stars-canvas');
+  const sx=sc.getContext('2d');
+  sc.width=window.innerWidth; sc.height=window.innerHeight;
+  const stars=Array.from({length:200},()=>({
+    x:Math.random()*sc.width, y:Math.random()*sc.height*0.9,
+    r:Math.random()*1.4+0.3, alpha:Math.random(), speed:Math.random()*0.008+0.003
   }));
-
-  function drawStars(t) {
-    sctx.clearRect(0, 0, sc.width, sc.height);
-    stars.forEach(s => {
-      s.alpha = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(t * s.speed * 60));
-      sctx.globalAlpha = s.alpha;
-      sctx.fillStyle   = '#fff';
-      sctx.beginPath();
-      sctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      sctx.fill();
+  function draw(t){
+    sx.clearRect(0,0,sc.width,sc.height);
+    stars.forEach(s=>{
+      s.alpha=0.3+0.7*(0.5+0.5*Math.sin(t*s.speed*60));
+      sx.globalAlpha=s.alpha; sx.fillStyle='#fff';
+      sx.beginPath(); sx.arc(s.x,s.y,s.r,0,Math.PI*2); sx.fill();
     });
-    sctx.globalAlpha = 1;
-    requestAnimationFrame(drawStars);
+    sx.globalAlpha=1; requestAnimationFrame(draw);
   }
-  requestAnimationFrame(drawStars);
+  requestAnimationFrame(draw);
 })();
 
-/* =========================================
-   TEXT PARTICLES
-   ========================================= */
-const canvas = document.getElementById('c');
-const ctx    = canvas.getContext('2d');
+/* ── DRIFTING CLOUDS ── */
+(function(){
+  const layer=document.getElementById('clouds-layer');
+  const VH=window.innerHeight;
 
-const LINE1 = 'Chúc mừng sinh nhật bố 🎂';
-const LINE2 = 'Chúc bố luôn mạnh khỏe, vui vẻ mỗi ngày ❤️';
+  const cfgs=[
+    {y:0.06, w:280, h:72,  op:0.90, dur:40, dir:'right', delay:0  },
+    {y:0.16, w:360, h:92,  op:0.82, dur:55, dir:'left',  delay:7  },
+    {y:0.26, w:210, h:58,  op:0.95, dur:45, dir:'right', delay:18 },
+    {y:0.10, w:440, h:105, op:0.78, dur:68, dir:'left',  delay:3  },
+    {y:0.34, w:320, h:82,  op:0.88, dur:50, dir:'right', delay:25 },
+    {y:0.04, w:190, h:52,  op:0.80, dur:36, dir:'left',  delay:32 },
+    {y:0.42, w:380, h:98,  op:0.82, dur:60, dir:'right', delay:14 },
+    {y:0.20, w:250, h:65,  op:0.85, dur:43, dir:'left',  delay:40 },
+  ];
 
-const DPR = Math.min(window.devicePixelRatio || 1, 2);
-const W   = Math.min(window.innerWidth - 24, 700);
-const H   = Math.round(W * 0.40);
-const FS1 = Math.max(Math.round(W * 0.082), 28);
-const FS2 = Math.max(Math.round(W * 0.054), 18);
+  cfgs.forEach(cfg=>{
+    const wrap=document.createElement('div');
+    wrap.style.cssText=`
+      position:absolute;
+      top:${cfg.y*100}%;
+      opacity:${cfg.op};
+      animation:${cfg.dir==='right'?'driftRight':'driftLeft'} ${cfg.dur}s linear ${cfg.delay}s infinite;
+      will-change:transform;
+    `;
+    // Cloud made of overlapping blurred divs
+    const W=cfg.w, H=cfg.h;
+    const cloud=document.createElement('div');
+    cloud.style.cssText=`position:relative;width:${W}px;height:${H}px;`;
 
-canvas.width  = W * DPR;
-canvas.height = H * DPR;
-canvas.style.width  = W + 'px';
-canvas.style.height = H + 'px';
-ctx.scale(DPR, DPR);
+    // base body
+    const body=document.createElement('div');
+    body.style.cssText=`
+      position:absolute; bottom:0; left:0;
+      width:100%; height:55%;
+      background:rgba(30,44,130,0.98);
+      border-radius:${H*0.28}px;
+      filter:blur(9px);
+    `;
+    cloud.appendChild(body);
 
-function sampleText() {
-  const off   = document.createElement('canvas');
-  const SCALE = 2;
-  off.width   = W * SCALE;
-  off.height  = H * SCALE;
-  const c = off.getContext('2d');
-  c.scale(SCALE, SCALE);
-  c.fillStyle = '#fff';
-  c.textAlign = 'center';
-  c.textBaseline = 'middle';
-  c.font = `700 ${FS1}px 'Dancing Script', cursive`;
-  c.fillText(LINE1, W / 2, H * 0.31);
-  c.font = `700 ${FS2}px 'Dancing Script', cursive`;
-  c.fillText(LINE2, W / 2, H * 0.74);
-  const data = c.getImageData(0, 0, W * SCALE, H * SCALE).data;
-  const pts  = [];
-  const STEP = 5;
-  for (let y = 0; y < H * SCALE; y += STEP)
-    for (let x = 0; x < W * SCALE; x += STEP)
-      if (data[(y * W * SCALE + x) * 4 + 3] > 140)
-        pts.push({ x: x / SCALE, y: y / SCALE });
+    // bumps
+    [{l:'8%',w:'36%',h:'80%'},{l:'28%',w:'44%',h:'100%'},{l:'54%',w:'33%',h:'72%'}].forEach(b=>{
+      const d=document.createElement('div');
+      d.style.cssText=`
+        position:absolute; bottom:28%;
+        left:${b.l}; width:${b.w}; height:${b.h};
+        background:rgba(34,48,138,0.95);
+        border-radius:50%; filter:blur(11px);
+      `;
+      cloud.appendChild(d);
+    });
+
+    wrap.appendChild(cloud);
+    layer.appendChild(wrap);
+  });
+})();
+
+/* ── TEXT PARTICLES ── */
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const LINE1='Chúc mừng sinh nhật bố 🎂';
+const LINE2='Chúc bố luôn mạnh khỏe, vui vẻ mỗi ngày ❤️';
+const DPR=Math.min(window.devicePixelRatio||1,2);
+const W=Math.min(window.innerWidth-24,700);
+const H=Math.round(W*0.40);
+const FS1=Math.max(Math.round(W*0.082),28);
+const FS2=Math.max(Math.round(W*0.054),18);
+canvas.width=W*DPR; canvas.height=H*DPR;
+canvas.style.width=W+'px'; canvas.style.height=H+'px';
+ctx.scale(DPR,DPR);
+
+function sampleText(){
+  const off=document.createElement('canvas'),SC=2;
+  off.width=W*SC; off.height=H*SC;
+  const c=off.getContext('2d'); c.scale(SC,SC);
+  c.fillStyle='#fff'; c.textAlign='center'; c.textBaseline='middle';
+  c.font=`700 ${FS1}px 'Dancing Script',cursive`; c.fillText(LINE1,W/2,H*0.31);
+  c.font=`700 ${FS2}px 'Dancing Script',cursive`; c.fillText(LINE2,W/2,H*0.74);
+  const d=c.getImageData(0,0,W*SC,H*SC).data,pts=[],STEP=5;
+  for(let y=0;y<H*SC;y+=STEP)
+    for(let x=0;x<W*SC;x+=STEP)
+      if(d[(y*W*SC+x)*4+3]>140) pts.push({x:x/SC,y:y/SC});
   return pts;
 }
+const PAL=['#ffffff','#ffffff','#fff8dc','#fffacd','#fde68a','#fcd34d'];
+const pick=()=>PAL[Math.floor(Math.random()*PAL.length)];
 
-const PALETTE = ['#ffffff','#ffffff','#fff8dc','#fffacd','#fde68a','#fcd34d'];
-const pick = () => PALETTE[Math.floor(Math.random() * PALETTE.length)];
-
-class P {
-  constructor(tx, ty) {
-    this.tx = tx; this.ty = ty;
-    this.color = pick();
-    const side = Math.floor(Math.random() * 4);
-    if      (side === 0) { this.x = Math.random() * W; this.y = -10; }
-    else if (side === 1) { this.x = W + 10; this.y = Math.random() * H; }
-    else if (side === 2) { this.x = Math.random() * W; this.y = H + 10; }
-    else                 { this.x = -10; this.y = Math.random() * H; }
-    this.vx = (Math.random() - 0.5) * 8;
-    this.vy = (Math.random() - 0.5) * 8;
-    this.size = Math.random() * 1.5 + 1.0;
-    this.phase = 'scatter';
+class P{
+  constructor(tx,ty){
+    this.tx=tx;this.ty=ty;this.color=pick();
+    const s=Math.floor(Math.random()*4);
+    if(s===0){this.x=Math.random()*W;this.y=-10;}
+    else if(s===1){this.x=W+10;this.y=Math.random()*H;}
+    else if(s===2){this.x=Math.random()*W;this.y=H+10;}
+    else{this.x=-10;this.y=Math.random()*H;}
+    this.vx=(Math.random()-0.5)*8;this.vy=(Math.random()-0.5)*8;
+    this.size=Math.random()*1.5+1.0;this.phase='scatter';
   }
-  update() {
-    if (this.phase === 'scatter') {
-      this.x += this.vx; this.y += this.vy;
-    } else {
-      const dx = this.tx - this.x, dy = this.ty - this.y;
-      this.vx += dx * 0.065; this.vy += dy * 0.065;
-      this.vx *= 0.77;       this.vy *= 0.77;
-      this.x += this.vx;     this.y += this.vy;
+  update(){
+    if(this.phase==='scatter'){this.x+=this.vx;this.y+=this.vy;}
+    else{
+      const dx=this.tx-this.x,dy=this.ty-this.y;
+      this.vx+=dx*0.065;this.vy+=dy*0.065;
+      this.vx*=0.77;this.vy*=0.77;
+      this.x+=this.vx;this.y+=this.vy;
     }
   }
-  draw() {
-    ctx.shadowBlur  = 8;
-    ctx.shadowColor = '#fffbe0';
-    ctx.fillStyle   = this.color;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
+  draw(){
+    ctx.shadowBlur=8;ctx.shadowColor='#fffbe0';
+    ctx.fillStyle=this.color;ctx.beginPath();
+    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();
+    ctx.shadowBlur=0;
   }
 }
-
-let particles = [], frame = 0;
-// After SETTLE_FRAME frames of gathering, fade in crisp text
-const SCATTER_F = 55;
-const SETTLE_F  = 160; // ~2.6s after gather starts
-
-document.fonts.ready.then(() => {
-  setTimeout(() => {
-    const pts = sampleText();
-    particles = pts.map(p => new P(p.x, p.y));
-
-    function loop() {
-      ctx.clearRect(0, 0, W, H);
-      frame++;
-      if (frame === SCATTER_F) particles.forEach(p => p.phase = 'gather');
-
-      // Once settled: fade in crisp text, fade out canvas
-      if (frame === SCATTER_F + SETTLE_F) {
-        document.getElementById('crispText').style.opacity = '1';
-        canvas.style.opacity = '0';
+let particles=[],frame=0;
+const SCATTER_F=55,SETTLE_F=160;
+document.fonts.ready.then(()=>{
+  setTimeout(()=>{
+    const pts=sampleText();
+    particles=pts.map(p=>new P(p.x,p.y));
+    function loop(){
+      ctx.clearRect(0,0,W,H);frame++;
+      if(frame===SCATTER_F)particles.forEach(p=>p.phase='gather');
+      if(frame===SCATTER_F+SETTLE_F){
+        document.getElementById('crispText').style.opacity='1';
+        canvas.style.opacity='0';
       }
-
-      particles.forEach(p => { p.update(); p.draw(); });
+      particles.forEach(p=>{p.update();p.draw();});
       requestAnimationFrame(loop);
     }
     loop();
-  }, 80);
+  },80);
 });
 
-/* =========================================
-   FIREWORKS
-   ========================================= */
-const fw   = document.getElementById('fw');
-const fctx = fw.getContext('2d');
-fw.width   = window.innerWidth;
-fw.height  = window.innerHeight;
-
-const FW_PAL = ['#facc15','#f87171','#ec4899','#c084fc','#38bdf8','#34d399','#fb923c','#fff','#a5f3fc'];
-
-let fwSparks = [];
-
-function addBurst(x, y) {
-  const count = 32 + Math.floor(Math.random() * 20);
-  for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2 + Math.random() * 0.2;
-    const speed = 2.5 + Math.random() * 4.5;
-    fwSparks.push({
-      x, y,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed,
-      alpha: 1,
-      color: FW_PAL[Math.floor(Math.random() * FW_PAL.length)],
-      size: Math.random() * 2.5 + 1.5,
-      trail: []
-    });
+/* ── FIREWORKS ── */
+const fw=document.getElementById('fw');
+const fctx=fw.getContext('2d');
+fw.width=window.innerWidth;fw.height=window.innerHeight;
+const FW_PAL=['#facc15','#f87171','#ec4899','#c084fc','#38bdf8','#34d399','#fb923c','#fff','#a5f3fc'];
+let fwSparks=[];
+function addBurst(x,y){
+  const n=32+Math.floor(Math.random()*20);
+  for(let i=0;i<n;i++){
+    const a=(i/n)*Math.PI*2+Math.random()*0.2,sp=2.5+Math.random()*4.5;
+    fwSparks.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,
+      alpha:1,color:FW_PAL[Math.floor(Math.random()*FW_PAL.length)],
+      size:Math.random()*2.5+1.5,trail:[]});
   }
 }
-
-function fwLoop() {
-  fctx.clearRect(0, 0, fw.width, fw.height);
-  fwSparks = fwSparks.filter(s => s.alpha > 0.02);
-  fwSparks.forEach(s => {
-    s.trail.push({ x: s.x, y: s.y, alpha: s.alpha });
-    if (s.trail.length > 5) s.trail.shift();
-
-    // draw trail
-    s.trail.forEach((t, i) => {
-      const a = (i / s.trail.length) * s.alpha * 0.4;
-      fctx.globalAlpha = a;
-      fctx.fillStyle   = s.color;
-      fctx.beginPath();
-      fctx.arc(t.x, t.y, s.size * 0.5, 0, Math.PI * 2);
-      fctx.fill();
+function fwLoop(){
+  fctx.clearRect(0,0,fw.width,fw.height);
+  fwSparks=fwSparks.filter(s=>s.alpha>0.02);
+  fwSparks.forEach(s=>{
+    s.trail.push({x:s.x,y:s.y,alpha:s.alpha});
+    if(s.trail.length>5)s.trail.shift();
+    s.trail.forEach((t,i)=>{
+      fctx.globalAlpha=(i/s.trail.length)*s.alpha*0.4;
+      fctx.fillStyle=s.color;fctx.beginPath();
+      fctx.arc(t.x,t.y,s.size*0.5,0,Math.PI*2);fctx.fill();
     });
-
-    fctx.globalAlpha = s.alpha;
-    fctx.shadowBlur  = 14;
-    fctx.shadowColor = s.color;
-    fctx.fillStyle   = s.color;
-    fctx.beginPath();
-    fctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-    fctx.fill();
-    fctx.shadowBlur  = 0;
-    fctx.globalAlpha = 1;
-
-    s.x += s.vx; s.y += s.vy;
-    s.vy += 0.055;
-    s.vx *= 0.98;
-    s.alpha -= 0.016;
-    s.size  *= 0.975;
+    fctx.globalAlpha=s.alpha;fctx.shadowBlur=14;fctx.shadowColor=s.color;
+    fctx.fillStyle=s.color;fctx.beginPath();
+    fctx.arc(s.x,s.y,s.size,0,Math.PI*2);fctx.fill();
+    fctx.shadowBlur=0;fctx.globalAlpha=1;
+    s.x+=s.vx;s.y+=s.vy;s.vy+=0.055;s.vx*=0.98;
+    s.alpha-=0.016;s.size*=0.975;
   });
   requestAnimationFrame(fwLoop);
 }
 fwLoop();
+setTimeout(()=>{
+  addBurst(fw.width*(0.08+Math.random()*0.84),fw.height*(0.04+Math.random()*0.5));
+  setInterval(()=>{
+    addBurst(fw.width*(0.08+Math.random()*0.84),fw.height*(0.04+Math.random()*0.5));
+    if(Math.random()>0.45)setTimeout(()=>
+      addBurst(fw.width*(0.1+Math.random()*0.8),fw.height*(0.05+Math.random()*0.45)),300);
+  },1900);
+},3000);
 
-function randomBurst() {
-  const x = fw.width  * (0.08 + Math.random() * 0.84);
-  const y = fw.height * (0.04 + Math.random() * 0.50);
-  addBurst(x, y);
-}
 
-setTimeout(() => {
-  randomBurst();
-  setInterval(() => {
-    randomBurst();
-    if (Math.random() > 0.45) setTimeout(randomBurst, 300);
-  }, 1900);
-}, 3000);
-
-/* =========================================
-   PHOTO UPLOAD
-   ========================================= */
-document.getElementById('fileInput').addEventListener('change', function () {
-  const file = this.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const inner = document.getElementById('photoInner');
-    inner.querySelectorAll('img').forEach(el => el.remove());
-    inner.querySelectorAll('svg,span').forEach(el => el.style.display = 'none');
-    const img = document.createElement('img');
-    img.src = e.target.result;
-    inner.appendChild(img);
-  };
-  reader.readAsDataURL(file);
-});
 </script>
 </body>
 </html>
