@@ -104,9 +104,6 @@
     to   { background-position: 200% center; }
   }
 
-  /* ── Photo Scene ──
-     Padded generously so candles above, ribbon below, stars on sides never clip
-  */
   .photo-scene {
     position: relative;
     width: 380px; height: 390px;
@@ -114,7 +111,6 @@
     animation: fadeUp 0.7s 3.8s forwards;
   }
 
-  /* Candles – absolutely positioned above photo centre */
   .candles-strip {
     position: absolute;
     top: 16px; left: 50%; transform: translateX(-50%);
@@ -149,7 +145,6 @@
     background: rgba(255,255,255,0.4); border-radius: 2px;
   }
 
-  /* Corner stars */
   .star-deco {
     position: absolute; font-size: 22px; z-index: 10;
     animation: starPop 1.8s ease-in-out infinite alternate;
@@ -163,7 +158,6 @@
     to   { transform: scale(1.2) rotate(10deg);  filter: drop-shadow(0 0 10px gold); }
   }
 
-  /* Outer spinning rainbow ring wrapper (centers it) */
   .photo-outer-ring {
     position: absolute;
     width: 214px; height: 214px;
@@ -179,7 +173,6 @@
     transform-origin: center center;
   }
 
-  /* Gold inner ring */
   .photo-ribbon {
     position: absolute; width: 190px; height: 190px;
     border-radius: 50%;
@@ -196,7 +189,6 @@
     50%      { box-shadow: 0 0 28px 10px rgba(245,158,11,0.8),inset 0 0 18px rgba(255,255,255,0.35); }
   }
 
-  /* Dark gap */
   .photo-gap {
     position: absolute; width: 200px; height: 200px;
     border-radius: 50%; background: #0a0c28;
@@ -204,7 +196,6 @@
     z-index: 2;
   }
 
-  /* Photo */
   .photo-circle {
     position: absolute; width: 174px; height: 174px;
     border-radius: 50%; overflow: hidden; z-index: 4; background: #0a0c28;
@@ -212,7 +203,6 @@
   }
   .photo-circle img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  /* Ribbon banner below photo */
   .ribbon-banner {
     position: absolute;
     bottom: 20px; left: 50%; transform: translateX(-50%);
@@ -230,7 +220,6 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── Floating side decorations ── */
   .side-deco {
     position: fixed;
     z-index: 8;
@@ -242,7 +231,6 @@
     to { opacity: 1; }
   }
 
-  /* Individual float animations */
   @keyframes floatA {
     0%,100% { transform: translateY(0px) rotate(-8deg); }
     50%      { transform: translateY(-14px) rotate(8deg); }
@@ -274,7 +262,6 @@
   .deco-item.medium { font-size: 28px; }
   .deco-item.large  { font-size: 38px; }
 
-  /* Left side positions */
   .sd-l1 { left: 2vw;  top: 12%; animation-delay: 4.0s; }
   .sd-l2 { left: 5vw;  top: 28%; animation-delay: 4.2s; }
   .sd-l3 { left: 1vw;  top: 44%; animation-delay: 4.4s; }
@@ -282,7 +269,6 @@
   .sd-l5 { left: 2vw;  top: 75%; animation-delay: 4.5s; }
   .sd-l6 { left: 8vw;  top: 88%; animation-delay: 4.3s; }
 
-  /* Right side positions */
   .sd-r1 { right: 2vw;  top: 10%; animation-delay: 4.0s; }
   .sd-r2 { right: 5vw;  top: 26%; animation-delay: 4.3s; }
   .sd-r3 { right: 1vw;  top: 42%; animation-delay: 4.1s; }
@@ -290,22 +276,54 @@
   .sd-r5 { right: 2vw;  top: 73%; animation-delay: 4.2s; }
   .sd-r6 { right: 8vw;  top: 87%; animation-delay: 4.4s; }
 
-  /* Float animation assignments */
   .sd-l1 .deco-item, .sd-r2 .deco-item { animation: floatA 3.2s ease-in-out infinite; }
   .sd-l2 .deco-item, .sd-r3 .deco-item { animation: floatB 4.1s ease-in-out infinite; }
   .sd-l3 .deco-item, .sd-r1 .deco-item { animation: floatC 3.7s ease-in-out infinite; }
   .sd-l4 .deco-item, .sd-r5 .deco-item { animation: candleFloat 2.8s ease-in-out infinite; }
   .sd-l5 .deco-item, .sd-r4 .deco-item { animation: twinkle 2.4s ease-in-out infinite; }
   .sd-l6 .deco-item, .sd-r6 .deco-item { animation: floatA 3.9s ease-in-out 0.5s infinite; }
+
+  /* ── Music Button ── */
+  #music-btn {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    z-index: 100;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 4px 15px rgba(245,158,11,0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: pulseBtn 2s ease-in-out infinite;
+  }
+  #music-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(245,158,11,0.7);
+  }
+  @keyframes pulseBtn {
+    0%,100% { box-shadow: 0 4px 15px rgba(245,158,11,0.5); }
+    50%      { box-shadow: 0 4px 28px rgba(245,158,11,0.9); }
+  }
+
+
 </style>
 </head>
 <body>
+
+<!-- Background music: muted autoplay trick to bypass browser policy -->
+<audio id="bgMusic" loop muted>
+  <source src="1.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Music toggle button -->
+<button id="music-btn" title="Bật/tắt nhạc">🎵</button>
 
 <div id="sky"></div>
 <canvas id="stars-canvas"></canvas>
 <div id="clouds-layer"></div>
 
-<!-- Static bottom cloud bank -->
 <svg class="cloud-bank" viewBox="0 0 1440 240" preserveAspectRatio="none" style="height:240px">
   <defs>
     <filter id="cb1"><feGaussianBlur stdDeviation="10"/></filter>
@@ -336,7 +354,6 @@
 
 <canvas id="fw"></canvas>
 
-<!-- Left side decorations -->
 <div class="side-deco sd-l1"><span class="deco-item large">🎂</span></div>
 <div class="side-deco sd-l2"><span class="deco-item small">⭐</span></div>
 <div class="side-deco sd-l3"><span class="deco-item medium">🕯️</span></div>
@@ -344,7 +361,6 @@
 <div class="side-deco sd-l5"><span class="deco-item medium">🎁</span></div>
 <div class="side-deco sd-l6"><span class="deco-item small">💛</span></div>
 
-<!-- Right side decorations -->
 <div class="side-deco sd-r1"><span class="deco-item medium">🌟</span></div>
 <div class="side-deco sd-r2"><span class="deco-item large">🎈</span></div>
 <div class="side-deco sd-r3"><span class="deco-item small">🕯️</span></div>
@@ -375,10 +391,8 @@
     </div>
   </div>
 
-  <!-- Photo Scene -->
   <div class="photo-scene" id="photoScene">
 
-    <!-- Candles above -->
     <div class="candles-strip">
       <div class="candle"><div class="flame"></div><div class="wick"></div><div class="candle-body"></div></div>
       <div class="candle"><div class="flame"></div><div class="wick"></div><div class="candle-body"></div></div>
@@ -387,13 +401,11 @@
       <div class="candle"><div class="flame"></div><div class="wick"></div><div class="candle-body"></div></div>
     </div>
 
-    <!-- Corner stars -->
     <span class="star-deco tl">⭐</span>
     <span class="star-deco tr">🌟</span>
     <span class="star-deco bl">✨</span>
     <span class="star-deco br">⭐</span>
 
-    <!-- Outer spinning rainbow ring (ring only, children stay still) -->
     <div class="photo-outer-ring"></div>
     <div class="photo-gap"></div>
     <div class="photo-ribbon"></div>
@@ -401,7 +413,6 @@
       <img id="photoImg" src="img.jpg" alt="Bố" onerror="this.style.display='none'">
     </div>
 
-    <!-- Ribbon banner -->
     <div class="ribbon-banner">
       <svg width="200" height="44" viewBox="0 0 200 44">
         <defs>
@@ -424,6 +435,52 @@
 </div>
 
 <script>
+/* ── MUSIC CONTROL ── */
+const bgMusic  = document.getElementById('bgMusic');
+const musicBtn = document.getElementById('music-btn');
+let   isPlaying = false;
+
+// Muted autoplay trick: browsers allow muted autoplay,
+// then we immediately unmute → music plays automatically!
+bgMusic.volume = 0.7;
+bgMusic.muted  = true;
+
+bgMusic.play().then(() => {
+  // Unmute after playback starts
+  bgMusic.muted = false;
+  isPlaying = true;
+  musicBtn.textContent = '🔊';
+}).catch(() => {
+  // Fallback: play on first user interaction anywhere on page
+  musicBtn.textContent = '🔇';
+  const startOnInteraction = () => {
+    bgMusic.muted = false;
+    bgMusic.play().then(() => {
+      isPlaying = true;
+      musicBtn.textContent = '🔊';
+    });
+    document.removeEventListener('click', startOnInteraction);
+    document.removeEventListener('touchstart', startOnInteraction);
+  };
+  document.addEventListener('click', startOnInteraction);
+  document.addEventListener('touchstart', startOnInteraction);
+});
+
+// Toggle button
+musicBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (isPlaying) {
+    bgMusic.pause();
+    isPlaying = false;
+    musicBtn.textContent = '🔇';
+  } else {
+    bgMusic.muted = false;
+    bgMusic.play();
+    isPlaying = true;
+    musicBtn.textContent = '🔊';
+  }
+});
+
 /* ── STARS ── */
 (function(){
   const sc=document.getElementById('stars-canvas');
@@ -448,56 +505,30 @@
 /* ── DRIFTING CLOUDS ── */
 (function(){
   const layer=document.getElementById('clouds-layer');
-  const VH=window.innerHeight;
-
   const cfgs=[
-    {y:0.06, w:280, h:72,  op:0.90, dur:40, dir:'right', delay:0  },
-    {y:0.16, w:360, h:92,  op:0.82, dur:55, dir:'left',  delay:7  },
-    {y:0.26, w:210, h:58,  op:0.95, dur:45, dir:'right', delay:18 },
-    {y:0.10, w:440, h:105, op:0.78, dur:68, dir:'left',  delay:3  },
-    {y:0.34, w:320, h:82,  op:0.88, dur:50, dir:'right', delay:25 },
-    {y:0.04, w:190, h:52,  op:0.80, dur:36, dir:'left',  delay:32 },
-    {y:0.42, w:380, h:98,  op:0.82, dur:60, dir:'right', delay:14 },
-    {y:0.20, w:250, h:65,  op:0.85, dur:43, dir:'left',  delay:40 },
+    {y:0.06,w:280,h:72,op:0.90,dur:40,dir:'right',delay:0},
+    {y:0.16,w:360,h:92,op:0.82,dur:55,dir:'left',delay:7},
+    {y:0.26,w:210,h:58,op:0.95,dur:45,dir:'right',delay:18},
+    {y:0.10,w:440,h:105,op:0.78,dur:68,dir:'left',delay:3},
+    {y:0.34,w:320,h:82,op:0.88,dur:50,dir:'right',delay:25},
+    {y:0.04,w:190,h:52,op:0.80,dur:36,dir:'left',delay:32},
+    {y:0.42,w:380,h:98,op:0.82,dur:60,dir:'right',delay:14},
+    {y:0.20,w:250,h:65,op:0.85,dur:43,dir:'left',delay:40},
   ];
-
   cfgs.forEach(cfg=>{
     const wrap=document.createElement('div');
-    wrap.style.cssText=`
-      position:absolute;
-      top:${cfg.y*100}%;
-      opacity:${cfg.op};
-      animation:${cfg.dir==='right'?'driftRight':'driftLeft'} ${cfg.dur}s linear ${cfg.delay}s infinite;
-      will-change:transform;
-    `;
-    // Cloud made of overlapping blurred divs
-    const W=cfg.w, H=cfg.h;
+    wrap.style.cssText=`position:absolute;top:${cfg.y*100}%;opacity:${cfg.op};animation:${cfg.dir==='right'?'driftRight':'driftLeft'} ${cfg.dur}s linear ${cfg.delay}s infinite;will-change:transform;`;
+    const W=cfg.w,H=cfg.h;
     const cloud=document.createElement('div');
     cloud.style.cssText=`position:relative;width:${W}px;height:${H}px;`;
-
-    // base body
     const body=document.createElement('div');
-    body.style.cssText=`
-      position:absolute; bottom:0; left:0;
-      width:100%; height:55%;
-      background:rgba(30,44,130,0.98);
-      border-radius:${H*0.28}px;
-      filter:blur(9px);
-    `;
+    body.style.cssText=`position:absolute;bottom:0;left:0;width:100%;height:55%;background:rgba(30,44,130,0.98);border-radius:${H*0.28}px;filter:blur(9px);`;
     cloud.appendChild(body);
-
-    // bumps
     [{l:'8%',w:'36%',h:'80%'},{l:'28%',w:'44%',h:'100%'},{l:'54%',w:'33%',h:'72%'}].forEach(b=>{
       const d=document.createElement('div');
-      d.style.cssText=`
-        position:absolute; bottom:28%;
-        left:${b.l}; width:${b.w}; height:${b.h};
-        background:rgba(34,48,138,0.95);
-        border-radius:50%; filter:blur(11px);
-      `;
+      d.style.cssText=`position:absolute;bottom:28%;left:${b.l};width:${b.w};height:${b.h};background:rgba(34,48,138,0.95);border-radius:50%;filter:blur(11px);`;
       cloud.appendChild(d);
     });
-
     wrap.appendChild(cloud);
     layer.appendChild(wrap);
   });
@@ -624,8 +655,6 @@ setTimeout(()=>{
       addBurst(fw.width*(0.1+Math.random()*0.8),fw.height*(0.05+Math.random()*0.45)),300);
   },1900);
 },3000);
-
-
 </script>
 </body>
 </html>
