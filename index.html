@@ -579,8 +579,8 @@ class P{
     if(this.phase==='scatter'){this.x+=this.vx;this.y+=this.vy;}
     else{
       const dx=this.tx-this.x,dy=this.ty-this.y;
-      this.vx+=dx*0.065;this.vy+=dy*0.065;
-      this.vx*=0.77;this.vy*=0.77;
+      this.vx+=dx*0.12;this.vy+=dy*0.12;
+      this.vx*=0.72;this.vy*=0.72;
       this.x+=this.vx;this.y+=this.vy;
     }
   }
@@ -592,7 +592,7 @@ class P{
   }
 }
 let particles=[],frame=0;
-const SCATTER_F=55,SETTLE_F=160;
+const SCATTER_F=25,SETTLE_F=70;
 document.fonts.ready.then(()=>{
   setTimeout(()=>{
     const pts=sampleText();
